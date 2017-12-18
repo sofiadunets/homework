@@ -1,0 +1,152 @@
+CREATE DATABASE TOURISM;
+
+CREATE TABLE TOURS(
+   ID   INT              NOT NULL,   --код тура
+   COUNTRY  INT          NOT NULL,   --код країни
+   NAME VARCHAR (50)     NOT NULL,	 --назва туру
+   OPERATOR  INT         NOT NULL,	 --код оператора
+   DESCRIPTION  TEXT,			     --опис туру      
+   PRIMARY KEY (ID)
+);
+
+CREATE TABLE COUNTRIES(
+   ID   INT              NOT NULL,   --код країни
+   NAME VARCHAR (20)     NOT NULL,	 --назва країни
+   VISA BIT				 NOT NULL,   --необхідність візи
+   PRIMARY KEY (ID)
+); 
+
+CREATE TABLE OPERATORS(
+   ID   INT              NOT NULL,   --код оператора
+   NAME VARCHAR (20)     NOT NULL,   --назва опаератора
+   ADDRESS  CHAR (25) ,
+   NUMBER   CHAR (25)      	     	 --контактні дані
+   PRIMARY KEY (ID)
+);
+
+CREATE TABLE TICKETS(
+   ID   INT              NOT NULL, 	 --код квитка
+   TOUR  INT             NOT NULL,   --код туру
+   PERSON  TINYINT(20)   NOT NULL,   --кількість осіб
+   BREAKFAST BIT         NOT NULL,   --сніданок
+   PRICE   SMALLMONEY    NOT NULL,   --ціна
+   DISCOUNT   SMALLMONEY             --знижка
+   PRIMARY KEY (ID)
+);
+
+CREATE TABLE ORDERS(
+   ID   INT              NOT NULL,    --замовлення
+   TICKET  INT           NOT NULL,    --код квитка
+   CLIENT  INT           NOT NULL,    --код клієнта
+   PAYMENT CHAR          NOT NULL,    --спосіб оплати
+   PRIMARY KEY (ID)
+);
+
+CREATE TABLE CLIENTS(
+   ID   INT              NOT NULL,    --код клієнта
+   NAME VARCHAR (20)     NOT NULL,    --ім'я
+   AGE  INT              NOT NULL,    --вік
+   TELEPHONE CHAR (13) ,              --номер телефону
+   EMAIL   CHAR (25)     NOT NULL,    --електроннна скринька 
+   HISTORY TEXT						  --історія замовлень (коди з ORDERS)   
+   STATUS TEXT,                       --статус клієнта (відносно надійності) 
+   PRIMARY KEY (ID)
+);
+
+ALTER TABLE TOURS
+   MODIFY NAME VARCHAR (50) NOT NULL UNIQUE;
+
+ALTER TABLE COUNTRIES
+   MODIFY NAME VARCHAR (20) NOT NULL UNIQUE;
+
+ALTER TABLE OPERATORS
+   ADD CONSTRAINT UNIQUEOPERATOR UNIQUE(NAME, ADRESS, NUMBER);
+
+ALTER TABLE OPERATORS
+   ADD CONSTRAINT UNIQUECLIENT UNIQUE(NAME, TELEPHONE, ADRESS);
+
+ALTER TABLE TOURS 
+   ADD FOREIGN KEY (COUNTRY) REFERENCES COUNTRIES (ID),
+   ADD FOREIGN KEY (OPERATOR) REFERENCES OPERATORS (ID);
+
+ALTER TABLE TICKETS 
+   ADD FOREIGN KEY (TOUR) REFERENCES TOURS (ID);
+
+ALTER TABLE TOURS 
+   ADD FOREIGN KEY (COUNTRY) REFERENCES COUNTRIES (ID)
+
+ALTER TABLE ORDERS 
+   ADD FOREIGN KEY (TICKET) REFERENCES TICKETS (ID),
+   ADD FOREIGN KEY (CLIENT) REFERENCES CLIENTS (ID);
+
+ALTER TABLE TIKETS
+   ADD CURRENCY CHAR(3);
+
+INSERT INTO TOURS
+VALUES  (10000, 001, 'Андорра Ескальдес Kyriad D'Urgell 3*', 0001, '7 ночей,  Виліт з Києва ');
+
+INSERT INTO TOURS
+VALUES  (10001, 003, 'Французький Каприз або 4 дні в Парижі!!!', 0001, '8 днів,  Виїзд зі Львова ');
+
+INSERT INTO TOURS
+VALUES  (10002, 001, ' Єгипет Хургада Long Beach Resort 4*', 0001, '9 ночей, все включено, Виліт зі Львова');
+
+INSERT INTO COUNTRIES
+VALUES (001, 'Єгипет', 0);
+
+INSERT INTO OPERATORS
+VALUES  (0001, 'Поїхали з нами', 'Львів, вул. Зелена 37', '0676768844');
+
+INSERT INTO TICKETS
+VALUES  (2001, 10000, 2, 1, 335, 'USD');
+
+INSERT INTO TICKETS
+VALUES  (2002, 10001, 2, 1, 301, 'EUR');
+
+INSERT INTO TICKETS
+VALUES  (2003, 10000, 2, 1, 309, 'USD');
+
+INSERT INTO ORDERS
+VALUES (3001, 2001, 4000, 'LIQPAY');
+
+INSERT INTO CLIENTS
+VALUES (4000, 'Карпюк Євгенія Валеріївна', 19, '0935566139', 'zhenyaaaaa@i.ua');
+
+INSERT INTO CLIENTS
+VALUES (4001, 'Ставчанська Ліза Вадимівна', 18, '0994420037', 'stavchanskaya99@gmail.com');
+
+INSERT INTO CLIENTS
+VALUES (4002, 'Мигул Софія', 20, '0634020114', 'sophiamygul29@gmail.com');
+
+INSERT INTO CLIENTS
+VALUES (4003, 'Мигул Олена', 20, '0996445330', 'olenamygul@gmail.com');
+
+INSERT INTO CLIENTS
+VALUES (4004, 'Коваль Ірина', 20, '0994437752', 'irynakoval2014@ukr.net');
+
+INSERT INTO CLIENTS
+VALUES (4005, 'Лисишин Іванна', 23, '0980705460', 'ivannalysyshyn@gmail.com');
+
+INSERT INTO CLIENTS
+VALUES (4006, 'Стецюк Люба', 21, '0951095270', 'liubovstetsiuk@gmail.com');
+
+INSERT INTO CLIENTS
+VALUES (4007, 'Поліщак Ірина', 21, '0960394241', 'irynkamandarynka@gmail.com');
+
+INSERT INTO CLIENTS
+VALUES (4008, 'Дунець Софія', 20, '0507159772', 'sofiadunets@ukr.net');
+
+UPDATE CLIENTS
+SET NUMBER='0637853840'
+WHERE ID=4004;
+
+UPDATE CLIENTS
+SET NAME='Когут Ірина'
+WHERE ID=4007;
+
+UPDATE CLIENTS
+SET STATUS='ALWAYS LATE'
+WHERE ID=4008;
+
+DELETE FROM CUSTOMERS
+WHERE STATUS='ALWAYS LATE';
